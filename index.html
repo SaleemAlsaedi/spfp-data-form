@@ -59,10 +59,10 @@
       flex: 1;
     }
     button {
-      padding: 8px 12px;
-      font-size: 14px;
-      margin-right: 8px;
-      margin-top: 8px;
+      padding: 6px 10px;
+      font-size: 13px;
+      margin-right: 6px;
+      margin-top: 6px;
       cursor: pointer;
     }
     table {
@@ -86,6 +86,11 @@
     .buttons-bar {
       margin-top: 6px;
       margin-bottom: 8px;
+    }
+    .action-btn {
+      padding: 4px 6px;
+      font-size: 11px;
+      margin-right: 4px;
     }
   </style>
 </head>
@@ -214,7 +219,7 @@
     </label>
   </div>
 
-  <!-- MRI / Reader -->
+  <!-- MRI -->
   <div class="section">
     <h2>MRI & Reader</h2>
 
@@ -455,7 +460,7 @@
   </div>
 
   <div class="buttons-bar">
-    <button type="submit">Add record</button>
+    <button type="submit" id="submitBtn">Add record</button>
     <button type="button" onclick="clearForm()">Clear form</button>
   </div>
 
@@ -492,8 +497,8 @@
   ];
 
   const STORAGE_KEY = "spfp_records_v1";
-
   let records = [];
+  let currentEditIndex = null;
 
   function initTableHeader() {
     const thead = document.querySelector("#recordsTable thead");
@@ -504,6 +509,9 @@
       th.textContent = col;
       tr.appendChild(th);
     });
+    const thActions = document.createElement("th");
+    thActions.textContent = "Actions";
+    tr.appendChild(thActions);
     thead.appendChild(tr);
   }
 
@@ -512,31 +520,56 @@
     return el && el.checked ? "Yes" : "No";
   }
 
-  function addRowToTable(record) {
+  function setCheckboxFromValue(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.checked = (value === "Yes");
+  }
+
+  function renderTable() {
     const tbody = document.querySelector("#recordsTable tbody");
-    const tr = document.createElement("tr");
-    columns.forEach(col => {
-      const td = document.createElement("td");
-      td.textContent = record[col] ?? "";
-      tr.appendChild(td);
+    tbody.innerHTML = "";
+    records.forEach((record, index) => {
+      const tr = document.createElement("tr");
+      columns.forEach(col => {
+        const td = document.createElement("td");
+        td.textContent = record[col] ?? "";
+        tr.appendChild(td);
+      });
+      const tdActions = document.createElement("td");
+      const btnEdit = document.createElement("button");
+      btnEdit.type = "button";
+      btnEdit.textContent = "Edit";
+      btnEdit.className = "action-btn";
+      btnEdit.onclick = () => startEditRecord(index);
+      const btnDelete = document.createElement("button");
+      btnDelete.type = "button";
+      btnDelete.textContent = "Delete";
+      btnDelete.className = "action-btn";
+      btnDelete.onclick = () => deleteRecord(index);
+      tdActions.appendChild(btnEdit);
+      tdActions.appendChild(btnDelete);
+      tr.appendChild(tdActions);
+      tbody.appendChild(tr);
     });
-    tbody.appendChild(tr);
   }
 
   function clearForm() {
     document.getElementById("dataForm").reset();
+    currentEditIndex = null;
+    document.getElementById("submitBtn").textContent = "Add record";
   }
 
   function clearAllRecords() {
     if (!confirm("Delete all records from this device?")) return;
     records = [];
-    const tbody = document.querySelector("#recordsTable tbody");
-    tbody.innerHTML = "";
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (e) {
       console.error(e);
     }
+    renderTable();
+    clearForm();
   }
 
   function escapeCSV(value) {
@@ -588,12 +621,67 @@
       const parsed = JSON.parse(json);
       if (!Array.isArray(parsed)) return;
       records = parsed;
-      const tbody = document.querySelector("#recordsTable tbody");
-      tbody.innerHTML = "";
-      records.forEach(rec => addRowToTable(rec));
+      renderTable();
     } catch (e) {
       console.error("Failed to load from localStorage", e);
     }
+  }
+
+  function startEditRecord(index) {
+    const r = records[index];
+    if (!r) return;
+    currentEditIndex = index;
+    document.getElementById("submitBtn").textContent = "Update record";
+
+    document.getElementById("collectorId").value = r.collectorId || "";
+    document.getElementById("studyId").value = r.studyId || "";
+    document.getElementById("patientKey").value = r.patientKey || "";
+    document.getElementById("age").value = r.age || "";
+    document.getElementById("sex").value = r.sex || "";
+    document.getElementById("bmi").value = r.bmi || "";
+    document.getElementById("side").value = r.side || "";
+    document.getElementById("mriDate").value = r.mriDate || "";
+    document.getElementById("akpIndication").value = r.akpIndication || "";
+    document.getElementById("painSide").value = r.painSide || "";
+    document.getElementById("painDuration").value = r.painDuration || "";
+    document.getElementById("painVAS").value = r.painVAS || "";
+    document.getElementById("otherClinical").value = r.otherClinical || "";
+    document.getElementById("reviewDate").value = r.reviewDate || "";
+
+    setCheckboxFromValue("planeSagittal", r.planeSagittal);
+    setCheckboxFromValue("planeAxial", r.planeAxial);
+    setCheckboxFromValue("planeCoronal", r.planeCoronal);
+    setCheckboxFromValue("seqT1", r.seqT1);
+    setCheckboxFromValue("seqT2", r.seqT2);
+    setCheckboxFromValue("seqSTIR", r.seqSTIR);
+    setCheckboxFromValue("seqPDFS", r.seqPDFS);
+
+    document.getElementById("seqOther").value = r.seqOther || "";
+    document.getElementById("spfpEdema").value = r.spfpEdema || "";
+    document.getElementById("spfpAP").value = r.spfpAP || "";
+    document.getElementById("spfpSignal").value = r.spfpSignal || "";
+    document.getElementById("spfpImpingementSigns").value = r.spfpImpingementSigns || "";
+    document.getElementById("spfpMassEffect").value = r.spfpMassEffect || "";
+    document.getElementById("hoffaEdema").value = r.hoffaEdema || "";
+    document.getElementById("patellarMaltracking").value = r.patellarMaltracking || "";
+    document.getElementById("jointEffusion").value = r.jointEffusion || "";
+    document.getElementById("pfChondromalacia").value = r.pfChondromalacia || "";
+    document.getElementById("trochlearDysplasia").value = r.trochlearDysplasia || "";
+    document.getElementById("dejourClass").value = r.dejourClass || "";
+    document.getElementById("quadPathology").value = r.quadPathology || "";
+    document.getElementById("patellarPathology").value = r.patellarPathology || "";
+    document.getElementById("otherMRI").value = r.otherMRI || "";
+    document.getElementById("finalSPFPImpingement").value = r.finalSPFPImpingement || "";
+    document.getElementById("readerComments").value = r.readerComments || "";
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function deleteRecord(index) {
+    if (!confirm("Delete this record?")) return;
+    records.splice(index, 1);
+    saveToLocalStorage();
+    renderTable();
   }
 
   document.getElementById("dataForm").addEventListener("submit", function (e) {
@@ -640,11 +728,17 @@
       readerComments: document.getElementById("readerComments").value.trim()
     };
 
-    records.push(record);
-    addRowToTable(record);
+    if (currentEditIndex === null) {
+      records.push(record);
+      alert("Record added and saved on this device.");
+    } else {
+      records[currentEditIndex] = record;
+      alert("Record updated and saved on this device.");
+    }
+
     saveToLocalStorage();
+    renderTable();
     clearForm();
-    alert("Record added and saved on this device.");
   });
 
   // Init
