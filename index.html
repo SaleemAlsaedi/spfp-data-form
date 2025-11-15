@@ -534,3 +534,227 @@
 
     <label>
       SPFP Impingement (final reader diagnosis)
+      <select id="finalSPFPImpingement">
+        <option value=""></option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+    </label>
+
+    <label>
+      Reader Comments
+      <textarea id="readerComments"></textarea>
+    </label>
+  </div>
+
+  <div class="buttons-bar">
+    <button type="submit">Add record</button>
+    <button type="button" onclick="clearForm()">Clear form</button>
+  </div>
+
+</form>
+
+<div class="buttons-bar">
+  <button type="button" onclick="exportCSV()">Export CSV</button>
+  <button type="button" onclick="clearAllRecords()">Clear all records (this device)</button>
+</div>
+
+<table id="recordsTable">
+  <thead></thead>
+  <tbody></tbody>
+</table>
+
+<script>
+  const columns = [
+    "collectorId", "hospital",
+    "studyId", "patientKey",
+    "age", "sex", "bmi",
+    "side", "mriDate",
+    "akpIndication", "painSide", "painDuration", "painVAS",
+    "otherClinical",
+    "inclusion", "exclusionPresent", "exclusionReason",
+    "readerId", "readerNumber", "reviewDate",
+    "planeSagittal", "planeAxial", "planeCoronal",
+    "seqT1", "seqT2", "seqSTIR", "seqPDFS", "seqOther",
+    "spfpEdema", "spfpAP", "spfpSignal", "spfpImpingementSigns",
+    "spfpIncreasedSignal", "spfpEnlargedSize",
+    "spfpMassPatella", "spfpMassFemur",
+    "hoffaEdema", "patellarMaltracking", "jointEffusion",
+    "pfChondromalacia", "trochlearDysplasia", "patellarTilt",
+    "quadPathology", "patellarPathology",
+    "otherMRI",
+    "finalSPFPImpingement", "readerComments"
+  ];
+
+  const STORAGE_KEY = "spfp_records_v1";
+
+  let records = [];
+
+  function initTableHeader() {
+    const thead = document.querySelector("#recordsTable thead");
+    thead.innerHTML = "";
+    const tr = document.createElement("tr");
+    columns.forEach(col => {
+      const th = document.createElement("th");
+      th.textContent = col;
+      tr.appendChild(th);
+    });
+    thead.appendChild(tr);
+  }
+
+  function getCheckboxValue(id) {
+    const el = document.getElementById(id);
+    return el && el.checked ? "Yes" : "No";
+  }
+
+  function addRowToTable(record) {
+    const tbody = document.querySelector("#recordsTable tbody");
+    const tr = document.createElement("tr");
+    columns.forEach(col => {
+      const td = document.createElement("td");
+      td.textContent = record[col] ?? "";
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  }
+
+  function clearForm() {
+    document.getElementById("dataForm").reset();
+  }
+
+  function clearAllRecords() {
+    if (!confirm("Delete all records from this device?")) return;
+    records = [];
+    const tbody = document.querySelector("#recordsTable tbody");
+    tbody.innerHTML = "";
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function escapeCSV(value) {
+    if (value == null) return "";
+    const str = String(value);
+    if (str.search(/[\",\n]/) !== -1) {
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  }
+
+  function exportCSV() {
+    if (records.length === 0) {
+      alert("No records to export.");
+      return;
+    }
+
+    let csv = "";
+    csv += columns.map(escapeCSV).join(",") + "\n";
+    records.forEach(rec => {
+      const row = columns.map(col => escapeCSV(rec[col] ?? "")).join(",");
+      csv += row + "\n";
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "spfp_data_" + new Date().toISOString().slice(0,10) + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function saveToLocalStorage() {
+    try {
+      const json = JSON.stringify(records);
+      localStorage.setItem(STORAGE_KEY, json);
+    } catch (e) {
+      console.error("Failed to save to localStorage", e);
+    }
+  }
+
+  function loadFromLocalStorage() {
+    try {
+      const json = localStorage.getItem(STORAGE_KEY);
+      if (!json) return;
+      const parsed = JSON.parse(json);
+      if (!Array.isArray(parsed)) return;
+      records = parsed;
+      const tbody = document.querySelector("#recordsTable tbody");
+      tbody.innerHTML = "";
+      records.forEach(rec => addRowToTable(rec));
+    } catch (e) {
+      console.error("Failed to load from localStorage", e);
+    }
+  }
+
+  document.getElementById("dataForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const record = {
+      collectorId: document.getElementById("collectorId").value.trim(),
+      hospital: document.getElementById("hospital").value.trim(),
+      studyId: document.getElementById("studyId").value.trim(),
+      patientKey: document.getElementById("patientKey").value.trim(),
+      age: document.getElementById("age").value,
+      sex: document.getElementById("sex").value,
+      bmi: document.getElementById("bmi").value,
+      side: document.getElementById("side").value,
+      mriDate: document.getElementById("mriDate").value,
+      akpIndication: document.getElementById("akpIndication").value,
+      painSide: document.getElementById("painSide").value,
+      painDuration: document.getElementById("painDuration").value,
+      painVAS: document.getElementById("painVAS").value,
+      otherClinical: document.getElementById("otherClinical").value.trim(),
+      inclusion: document.getElementById("inclusion").value,
+      exclusionPresent: document.getElementById("exclusionPresent").value,
+      exclusionReason: document.getElementById("exclusionReason").value.trim(),
+      readerId: document.getElementById("readerId").value.trim(),
+      readerNumber: document.getElementById("readerNumber").value,
+      reviewDate: document.getElementById("reviewDate").value,
+      planeSagittal: getCheckboxValue("planeSagittal"),
+      planeAxial: getCheckboxValue("planeAxial"),
+      planeCoronal: getCheckboxValue("planeCoronal"),
+      seqT1: getCheckboxValue("seqT1"),
+      seqT2: getCheckboxValue("seqT2"),
+      seqSTIR: getCheckboxValue("seqSTIR"),
+      seqPDFS: getCheckboxValue("seqPDFS"),
+      seqOther: document.getElementById("seqOther").value.trim(),
+      spfpEdema: document.getElementById("spfpEdema").value,
+      spfpAP: document.getElementById("spfpAP").value,
+      spfpSignal: document.getElementById("spfpSignal").value,
+      spfpImpingementSigns: document.getElementById("spfpImpingementSigns").value,
+      spfpIncreasedSignal: document.getElementById("spfpIncreasedSignal").value,
+      spfpEnlargedSize: document.getElementById("spfpEnlargedSize").value,
+      spfpMassPatella: document.getElementById("spfpMassPatella").value,
+      spfpMassFemur: document.getElementById("spfpMassFemur").value,
+      hoffaEdema: document.getElementById("hoffaEdema").value,
+      patellarMaltracking: document.getElementById("patellarMaltracking").value,
+      jointEffusion: document.getElementById("jointEffusion").value,
+      pfChondromalacia: document.getElementById("pfChondromalacia").value,
+      trochlearDysplasia: document.getElementById("trochlearDysplasia").value,
+      patellarTilt: document.getElementById("patellarTilt").value,
+      quadPathology: document.getElementById("quadPathology").value,
+      patellarPathology: document.getElementById("patellarPathology").value,
+      otherMRI: document.getElementById("otherMRI").value.trim(),
+      finalSPFPImpingement: document.getElementById("finalSPFPImpingement").value,
+      readerComments: document.getElementById("readerComments").value.trim()
+    };
+
+    records.push(record);
+    addRowToTable(record);
+    saveToLocalStorage();
+    clearForm();
+    alert("Record added and saved on this device.");
+  });
+
+  // Init
+  initTableHeader();
+  loadFromLocalStorage();
+</script>
+
+</body>
+</html>
