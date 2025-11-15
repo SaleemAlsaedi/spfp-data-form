@@ -107,11 +107,6 @@
       <input type="text" id="collectorId" required>
     </label>
 
-    <label>
-      Hospital / Site
-      <input type="text" id="hospital" placeholder="e.g. KFSH, PSMMC">
-    </label>
-
     <div class="horizontal-group">
       <div>
         <label>
@@ -219,64 +214,14 @@
     </label>
   </div>
 
-  <!-- Eligibility -->
-  <div class="section">
-    <h2>Eligibility</h2>
-
-    <label>
-      Meets Inclusion Criteria?
-      <select id="inclusion">
-        <option value=""></option>
-        <option value="Yes">Yes</option>
-        <option value="No">No</option>
-        <option value="Unclear">Unclear</option>
-      </select>
-    </label>
-
-    <label>
-      Exclusion Criteria Present?
-      <select id="exclusionPresent">
-        <option value=""></option>
-        <option value="No">No</option>
-        <option value="Yes">Yes</option>
-      </select>
-    </label>
-
-    <label>
-      Exclusion Reason (if any)
-      <input type="text" id="exclusionReason">
-    </label>
-  </div>
-
   <!-- MRI / Reader -->
   <div class="section">
     <h2>MRI & Reader</h2>
 
-    <div class="horizontal-group">
-      <div>
-        <label>
-          Reader ID / Initials
-          <input type="text" id="readerId">
-        </label>
-      </div>
-      <div>
-        <label>
-          Reader Number
-          <select id="readerNumber">
-            <option value=""></option>
-            <option value="1">Reader 1</option>
-            <option value="2">Reader 2</option>
-            <option value="Other">Other</option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>
-          Review Date
-          <input type="date" id="reviewDate">
-        </label>
-      </div>
-    </div>
+    <label>
+      Review Date
+      <input type="date" id="reviewDate">
+    </label>
 
     <h3 style="font-size:14px;margin-top:8px;">Planes Reviewed</h3>
     <div class="horizontal-group">
@@ -369,55 +314,15 @@
 
     <h3 style="font-size:14px;margin-top:8px;">Additional SPFP Features</h3>
 
-    <div class="horizontal-group">
-      <div>
-        <label>
-          Increased Signal?
-          <select id="spfpIncreasedSignal">
-            <option value=""></option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="NA">Not assessed</option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>
-          Enlarged Size?
-          <select id="spfpEnlargedSize">
-            <option value=""></option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="NA">Not assessed</option>
-          </select>
-        </label>
-      </div>
-    </div>
-
-    <div class="horizontal-group">
-      <div>
-        <label>
-          Mass Effect on Patella?
-          <select id="spfpMassPatella">
-            <option value=""></option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="NA">Not assessed</option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>
-          Mass Effect on Femur?
-          <select id="spfpMassFemur">
-            <option value=""></option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="NA">Not assessed</option>
-          </select>
-        </label>
-      </div>
-    </div>
+    <label>
+      Mass effect
+      <select id="spfpMassEffect">
+        <option value=""></option>
+        <option value="Patella">Patella</option>
+        <option value="Femur">Femur</option>
+        <option value="None">None</option>
+      </select>
+    </label>
   </div>
 
   <!-- Associated Findings -->
@@ -488,12 +393,14 @@
       </div>
       <div>
         <label>
-          Abnormal Patellar Tilt / Q-angle
-          <select id="patellarTilt">
+          Dejour classification
+          <select id="dejourClass">
             <option value=""></option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="NA">Not assessed</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="Not assessed">Not assessed</option>
           </select>
         </label>
       </div>
@@ -566,21 +473,19 @@
 
 <script>
   const columns = [
-    "collectorId", "hospital",
+    "collectorId",
     "studyId", "patientKey",
     "age", "sex", "bmi",
     "side", "mriDate",
     "akpIndication", "painSide", "painDuration", "painVAS",
     "otherClinical",
-    "inclusion", "exclusionPresent", "exclusionReason",
-    "readerId", "readerNumber", "reviewDate",
+    "reviewDate",
     "planeSagittal", "planeAxial", "planeCoronal",
     "seqT1", "seqT2", "seqSTIR", "seqPDFS", "seqOther",
     "spfpEdema", "spfpAP", "spfpSignal", "spfpImpingementSigns",
-    "spfpIncreasedSignal", "spfpEnlargedSize",
-    "spfpMassPatella", "spfpMassFemur",
+    "spfpMassEffect",
     "hoffaEdema", "patellarMaltracking", "jointEffusion",
-    "pfChondromalacia", "trochlearDysplasia", "patellarTilt",
+    "pfChondromalacia", "trochlearDysplasia", "dejourClass",
     "quadPathology", "patellarPathology",
     "otherMRI",
     "finalSPFPImpingement", "readerComments"
@@ -696,7 +601,6 @@
 
     const record = {
       collectorId: document.getElementById("collectorId").value.trim(),
-      hospital: document.getElementById("hospital").value.trim(),
       studyId: document.getElementById("studyId").value.trim(),
       patientKey: document.getElementById("patientKey").value.trim(),
       age: document.getElementById("age").value,
@@ -709,11 +613,6 @@
       painDuration: document.getElementById("painDuration").value,
       painVAS: document.getElementById("painVAS").value,
       otherClinical: document.getElementById("otherClinical").value.trim(),
-      inclusion: document.getElementById("inclusion").value,
-      exclusionPresent: document.getElementById("exclusionPresent").value,
-      exclusionReason: document.getElementById("exclusionReason").value.trim(),
-      readerId: document.getElementById("readerId").value.trim(),
-      readerNumber: document.getElementById("readerNumber").value,
       reviewDate: document.getElementById("reviewDate").value,
       planeSagittal: getCheckboxValue("planeSagittal"),
       planeAxial: getCheckboxValue("planeAxial"),
@@ -727,16 +626,13 @@
       spfpAP: document.getElementById("spfpAP").value,
       spfpSignal: document.getElementById("spfpSignal").value,
       spfpImpingementSigns: document.getElementById("spfpImpingementSigns").value,
-      spfpIncreasedSignal: document.getElementById("spfpIncreasedSignal").value,
-      spfpEnlargedSize: document.getElementById("spfpEnlargedSize").value,
-      spfpMassPatella: document.getElementById("spfpMassPatella").value,
-      spfpMassFemur: document.getElementById("spfpMassFemur").value,
+      spfpMassEffect: document.getElementById("spfpMassEffect").value,
       hoffaEdema: document.getElementById("hoffaEdema").value,
       patellarMaltracking: document.getElementById("patellarMaltracking").value,
       jointEffusion: document.getElementById("jointEffusion").value,
       pfChondromalacia: document.getElementById("pfChondromalacia").value,
       trochlearDysplasia: document.getElementById("trochlearDysplasia").value,
-      patellarTilt: document.getElementById("patellarTilt").value,
+      dejourClass: document.getElementById("dejourClass").value,
       quadPathology: document.getElementById("quadPathology").value,
       patellarPathology: document.getElementById("patellarPathology").value,
       otherMRI: document.getElementById("otherMRI").value.trim(),
