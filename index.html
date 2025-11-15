@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SPFP Impingement Data Collection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 10px;
+      background: #f7f7f7;
+    }
+    h1 {
+      font-size: 20px;
+      margin: 0 0 8px;
+    }
+    .small-note {
+      font-size: 12px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+    .section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ddd;
+    }
+    .section h2 {
+      font-size: 16px;
+      margin: 0 0 6px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+      margin-top: 2px;
+    }
+    textarea {
+      min-height: 50px;
+      resize: vertical;
+    }
+    .horizontal-group {
+      display: flex;
+      gap: 8px;
+    }
+    .horizontal-group > div {
+      flex: 1;
+    }
+    button {
+      padding: 8px 12px;
+      font-size: 14px;
+      margin-right: 8px;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 11px;
+      margin-top: 12px;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 4px;
+      text-align: left;
+    }
+    th {
+      background: #eee;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .buttons-bar {
+      margin-top: 6px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>SPFP Impingement Data Collection</h1>
+<p class="small-note">
+  Important: use de-identified Study IDs only, unless your IRB and hospital policy explicitly allow identifiable data on your device.
+</p>
+
+<form id="dataForm">
+
+  <!-- Collector & General -->
+  <div class="section">
+    <h2>Collector & General</h2>
+
+    <label>
+      Data Collector ID (initials)
+      <input type="text" id="collectorId" required>
+    </label>
+
+    <label>
+      Hospital / Site
+      <input type="text" id="hospital" placeholder="e.g. KFSH, PSMMC">
+    </label>
+
+    <div class="horizontal-group">
+      <div>
+        <label>
+          Study ID
+          <input type="text" id="studyId" required>
+        </label>
+      </div>
+      <div>
+        <label>
+          Patient Key Code (de-identified)
+          <input type="text" id="patientKey">
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clinical -->
+  <div class="section">
+    <h2>Clinical Data</h2>
+
+    <div class="horizontal-group">
+      <div>
+        <label>
+          Age (years)
+          <input type="number" id="age" min="0" max="120">
+        </label>
+      </div>
+      <div>
+        <label>
+          Sex
+          <select id="sex">
+            <option value=""></option>
+            <option value="M">M</option>
+            <option value="F">F</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          BMI
+          <input type="number" id="bmi" min="0" step="0.1">
+        </label>
+      </div>
+    </div>
+
+    <div class="horizontal-group">
+      <div>
+        <label>
+          Symptomatic Side
+          <select id="side">
+            <option value=""></option>
+            <option value="R">Right</option>
+            <option value="L">Left</option>
+            <option value="Both">Both</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          MRI Date
+          <input type="date" id="mriDate">
+        </label>
+      </div>
+    </div>
+
+    <label>
+      Indication: Anterior Knee Pain
+      <select id="akpIndication">
+        <option value=""></option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+    </label>
+
+    <div class="horizontal-group">
+      <div>
+        <label>
+          Pain Side
+          <select id="painSide">
+            <option value=""></option>
+            <option value="R">Right</option>
+            <option value="L">Left</option>
+            <option value="Both">Both</option>
+            <option value="NA">Not specified</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Pain Duration (weeks)
+          <input type="number" id="painDuration" min="0">
+        </label>
+      </div>
+      <div>
+        <label>
+          Pain Severity (VAS 0–10)
+          <input type="number" id="painVAS" min="0" max="10" step="0.5">
+        </label>
+      </div>
+    </div>
+
+    <label>
+      Other Clinical Notes
+      <textarea id="otherClinical"></textarea>
+    </label>
+  </div>
+
+  <!-- Eligibility -->
+  <div class="section">
+    <h2>Eligibility</h2>
+
+    <label>
+      Meets Inclusion Criteria?
+      <select id="inclusion">
+        <option value=""></option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+        <option value="Unclear">Unclear</option>
+      </select>
+    </label>
+
+    <label>
+      Exclusion Criteria Present?
+      <select id="exclusionPresent">
+        <option value=""></option>
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+      </select>
+    </label>
+
+    <label>
+      Exclusion Reason (if any)
+      <input type="text" id="exclusionReason">
+    </label>
+  </div>
+
+  <!-- MRI / Reader -->
+  <div class="section">
+    <h2>MRI & Reader</h2>
+
+    <div class="horizontal-group">
+      <div>
+        <label>
+          Reader ID / Initials
+          <input type="text" id="readerId">
+        </label>
+      </div>
+      <div>
+        <label>
+          Reader Number
+          <select id="readerNumber">
+            <option value=""></option>
+            <option value="1">Reader 1</option>
+            <option value="2">Reader 2</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Review Date
+          <input type="date" id="reviewDate">
+        </label>
+      </div>
+    </div>
+
+    <h3 style="font-size:14px;margin-top:8px;">Planes Reviewed</h3>
+    <div class="horizontal-group">
+      <div>
+        <label>
+          <input type="checkbox" id="planeSagittal"> Sagittal
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" id="planeAxial"> Axial
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" id="planeCoronal"> Coronal
+        </label>
+      </div>
+    </div>
+
+    <h3 style="font-size:14px;margin-top:8px;">Sequences Used</h3>
+    <div class="horizontal-group">
+      <div>
+        <label>
+          <input type="checkbox" id="seqT1"> T1
+        </label>
+        <label>
+          <input type="checkbox" id="seqT2"> T2
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" id="seqSTIR"> STIR
+        </label>
+        <label>
+          <input type="checkbox" id="seqPDFS"> PD FS
+        </label>
+      </div>
+    </div>
+    <label>
+      Other Sequences
+      <input type="text" id="seqOther">
+    </label>
+  </div>
+
+  <!-- SPFP -->
+  <div class="section">
+    <h2>SPFP Assessment</h2>
+
+    <div class="horizontal-group">
+      <div>
+        <label>
+          SPFP Edema
+          <select id="spfpEdema">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          SPFP AP Diameter (mm)
+          <input type="number" id="spfpAP" min="0" step="0.1">
+        </label>
+      </div>
+    </div>
+
+    <label>
+      SPFP Signal (T2 / PD FS)
+      <select id="spfpSignal">
+        <option value=""></option>
+        <option value="Normal">Normal</option>
+        <option value="Mild">Mild</option>
+        <option value="Moderate">Moderate</option>
+        <option value="High">High</option>
+        <option value="Not assessed">Not assessed</option>
+      </select>
+    </label>
+
+    <label>
+      Signs of SPFP Impingement
+      <select id="spfpImpingementSigns">
+        <option value=""></option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+        <option value="Unclear">Unclear</option>
+      </select>
+    </label>
+
+    <h3 style="font-size:14px;margin-top:8px;">Additional SPFP Features</h3>
+
+    <div class="horizontal-group">
+      <div>
+        <label>
+          Increased Signal?
+          <select id="spfpIncreasedSignal">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="NA">Not assessed</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Enlarged Size?
+          <select id="spfpEnlargedSize">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="NA">Not assessed</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="horizontal-group">
+      <div>
+        <label>
+          Mass Effect on Patella?
+          <select id="spfpMassPatella">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="NA">Not assessed</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Mass Effect on Femur?
+          <select id="spfpMassFemur">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="NA">Not assessed</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Associated Findings -->
+  <div class="section">
+    <h2>Associated MRI Findings</h2>
+
+    <div class="horizontal-group">
+      <div>
+        <label>
+          Hoffa Fat Pad Edema
+          <select id="hoffaEdema">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Patellar Maltracking
+          <select id="patellarMaltracking">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Joint Effusion
+          <select id="jointEffusion">
+            <option value=""></option>
+            <option value="None">None</option>
+            <option value="Mild">Mild</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Severe">Severe</option>
+            <option value="Not assessed">Not assessed</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="horizontal-group">
+      <div>
+        <label>
+          PF Chondromalacia (0–4)
+          <select id="pfChondromalacia">
+            <option value=""></option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="Not assessed">Not assessed</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Trochlear Dysplasia
+          <select id="trochlearDysplasia">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="NA">Not assessed</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Abnormal Patellar Tilt / Q-angle
+          <select id="patellarTilt">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="NA">Not assessed</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="horizontal-group">
+      <div>
+        <label>
+          Quadriceps Tendon Pathology
+          <select id="quadPathology">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Patellar Tendon Pathology
+          <select id="patellarPathology">
+            <option value=""></option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <label>
+      Other MRI Findings
+      <textarea id="otherMRI"></textarea>
+    </label>
+  </div>
+
+  <!-- Final Impression -->
+  <div class="section">
+    <h2>Final Reader Impression</h2>
+
+    <label>
+      SPFP Impingement (final reader diagnosis)
+      <select id="finalSPFPImpingement">
+        <option value=""></option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+    </label>
+
+    <label>
+      Reader Comments
+      <textarea id="readerComments"></textarea>
+    </label>
+  </div>
+
+  <div class="buttons-bar">
+    <button type="submit">Add record</button>
+    <button type="button" onclick="clearForm()">Clear form</button>
+  </div>
+
+</form>
+
+<div class="buttons-bar">
+  <button type="button" onclick="exportCSV()">Export CSV</button>
+  <button type="button" onclick="clearAllRecords()">Clear all records</button>
+</div>
+
+<table id="recordsTable">
+  <thead></thead>
+  <tbody></tbody>
+</table>
+
+<script>
+  const columns = [
+    "collectorId", "hospital",
+    "studyId", "patientKey",
+    "age", "sex", "bmi",
+    "side", "mriDate",
+    "akpIndication", "painSide", "painDuration", "painVAS",
+    "otherClinical",
+    "inclusion", "exclusionPresent", "exclusionReason",
+    "readerId", "readerNumber", "reviewDate",
+    "planeSagittal", "planeAxial", "planeCoronal",
+    "seqT1", "seqT2", "seqSTIR", "seqPDFS", "seqOther",
+    "spfpEdema", "spfpAP", "spfpSignal", "spfpImpingementSigns",
+    "spfpIncreasedSignal", "spfpEnlargedSize",
+    "spfpMassPatella", "spfpMassFemur",
+    "hoffaEdema", "patellarMaltracking", "jointEffusion",
+    "pfChondromalacia", "trochlearDysplasia", "patellarTilt",
+    "quadPathology", "patellarPathology",
+    "otherMRI",
+    "finalSPFPImpingement", "readerComments"
+  ];
+
+  let records = [];
+
+  function initTableHeader() {
+    const thead = document.querySelector("#recordsTable thead");
+    const tr = document.createElement("tr");
+    columns.forEach(col => {
+      const th = document.createElement("th");
+      th.textContent = col;
+      tr.appendChild(th);
+    });
+    thead.appendChild(tr);
+  }
+
+  function getCheckboxValue(id) {
+    const el = document.getElementById(id);
+    return el && el.checked ? "Yes" : "No";
+  }
+
+  function addRowToTable(record) {
+    const tbody = document.querySelector("#recordsTable tbody");
+    const tr = document.createElement("tr");
+    columns.forEach(col => {
+      const td = document.createElement("td");
+      td.textContent = record[col] ?? "";
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  }
+
+  function clearForm() {
+    document.getElementById("dataForm").reset();
+  }
+
+  function clearAllRecords() {
+    if (!confirm("Delete all records from this session?")) return;
+    records = [];
+    const tbody = document.querySelector("#recordsTable tbody");
+    tbody.innerHTML = "";
+  }
+
+  function escapeCSV(value) {
+    if (value == null) return "";
+    const str = String(value);
+    if (str.search(/[",\n]/) !== -1) {
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  }
+
+  function exportCSV() {
+    if (records.length === 0) {
+      alert("No records to export.");
+      return;
+    }
+
+    let csv = "";
+    csv += columns.map(escapeCSV).join(",") + "\n";
+    records.forEach(rec => {
+      const row = columns.map(col => escapeCSV(rec[col] ?? "")).join(",");
+      csv += row + "\n";
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "spfp_data_" + new Date().toISOString().slice(0,10) + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById("dataForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const record = {
+      collectorId: document.getElementById("collectorId").value.trim(),
+      hospital: document.getElementById("hospital").value.trim(),
+      studyId: document.getElementById("studyId").value.trim(),
+      patientKey: document.getElementById("patientKey").value.trim(),
+      age: document.getElementById("age").value,
+      sex: document.getElementById("sex").value,
+      bmi: document.getElementById("bmi").value,
+      side: document.getElementById("side").value,
+      mriDate: document.getElementById("mriDate").value,
+      akpIndication: document.getElementById("akpIndication").value,
+      painSide: document.getElementById("painSide").value,
+      painDuration: document.getElementById("painDuration").value,
+      painVAS: document.getElementById("painVAS").value,
+      otherClinical: document.getElementById("otherClinical").value.trim(),
+      inclusion: document.getElementById("inclusion").value,
+      exclusionPresent: document.getElementById("exclusionPresent").value,
+      exclusionReason: document.getElementById("exclusionReason").value.trim(),
+      readerId: document.getElementById("readerId").value.trim(),
+      readerNumber: document.getElementById("readerNumber").value,
+      reviewDate: document.getElementById("reviewDate").value,
+      planeSagittal: getCheckboxValue("planeSagittal"),
+      planeAxial: getCheckboxValue("planeAxial"),
+      planeCoronal: getCheckboxValue("planeCoronal"),
+      seqT1: getCheckboxValue("seqT1"),
+      seqT2: getCheckboxValue("seqT2"),
+      seqSTIR: getCheckboxValue("seqSTIR"),
+      seqPDFS: getCheckboxValue("seqPDFS"),
+      seqOther: document.getElementById("seqOther").value.trim(),
+      spfpEdema: document.getElementById("spfpEdema").value,
+      spfpAP: document.getElementById("spfpAP").value,
+      spfpSignal: document.getElementById("spfpSignal").value,
+      spfpImpingementSigns: document.getElementById("spfpImpingementSigns").value,
+      spfpIncreasedSignal: document.getElementById("spfpIncreasedSignal").value,
+      spfpEnlargedSize: document.getElementById("spfpEnlargedSize").value,
+      spfpMassPatella: document.getElementById("spfpMassPatella").value,
+      spfpMassFemur: document.getElementById("spfpMassFemur").value,
+      hoffaEdema: document.getElementById("hoffaEdema").value,
+      patellarMaltracking: document.getElementById("patellarMaltracking").value,
+      jointEffusion: document.getElementById("jointEffusion").value,
+      pfChondromalacia: document.getElementById("pfChondromalacia").value,
+      trochlearDysplasia: document.getElementById("trochlearDysplasia").value,
+      patellarTilt: document.getElementById("patellarTilt").value,
+      quadPathology: document.getElementById("quadPathology").value,
+      patellarPathology: document.getElementById("patellarPathology").value,
+      otherMRI: document.getElementById("otherMRI").value.trim(),
+      finalSPFPImpingement: document.getElementById("finalSPFPImpingement").value,
+      readerComments: document.getElementById("readerComments").value.trim()
+    };
+
+    records.push(record);
+    addRowToTable(record);
+    clearForm();
+    alert("Record added in this session.");
+  });
+
+  initTableHeader();
+</script>
+
+</body>
+</html>
