@@ -308,6 +308,24 @@
     </label>
 
     <label>
+      SPFP Signal (T1)
+      <select id="spfpSignalT">
+        <option value=""></option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+    </label>
+
+    <label>
+      SPFP mass
+      <select id="spfpMass">
+        <option value=""></option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+    </label>
+
+    <label>
       Signs of SPFP Impingement
       <select id="spfpImpingementSigns">
         <option value=""></option>
@@ -325,6 +343,7 @@
         <option value=""></option>
         <option value="Patella">Patella</option>
         <option value="Femur">Femur</option>
+        <option value="Quadriceps tendon">Quadriceps tendon</option>
         <option value="None">None</option>
       </select>
     </label>
@@ -487,7 +506,8 @@
     "reviewDate",
     "planeSagittal", "planeAxial", "planeCoronal",
     "seqT1", "seqT2", "seqSTIR", "seqPDFS", "seqOther",
-    "spfpEdema", "spfpAP", "spfpSignal", "spfpImpingementSigns",
+    "spfpEdema", "spfpAP", "spfpSignal", "spfpSignalT", "spfpMass",
+    "spfpImpingementSigns",
     "spfpMassEffect",
     "hoffaEdema", "patellarMaltracking", "jointEffusion",
     "pfChondromalacia", "trochlearDysplasia", "dejourClass",
@@ -660,6 +680,8 @@
     document.getElementById("spfpEdema").value = r.spfpEdema || "";
     document.getElementById("spfpAP").value = r.spfpAP || "";
     document.getElementById("spfpSignal").value = r.spfpSignal || "";
+    document.getElementById("spfpSignalT").value = r.spfpSignalT || "";
+    document.getElementById("spfpMass").value = r.spfpMass || "";
     document.getElementById("spfpImpingementSigns").value = r.spfpImpingementSigns || "";
     document.getElementById("spfpMassEffect").value = r.spfpMassEffect || "";
     document.getElementById("hoffaEdema").value = r.hoffaEdema || "";
@@ -713,6 +735,8 @@
       spfpEdema: document.getElementById("spfpEdema").value,
       spfpAP: document.getElementById("spfpAP").value,
       spfpSignal: document.getElementById("spfpSignal").value,
+      spfpSignalT: document.getElementById("spfpSignalT").value,
+      spfpMass: document.getElementById("spfpMass").value,
       spfpImpingementSigns: document.getElementById("spfpImpingementSigns").value,
       spfpMassEffect: document.getElementById("spfpMassEffect").value,
       hoffaEdema: document.getElementById("hoffaEdema").value,
