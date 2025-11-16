@@ -297,7 +297,7 @@
 
     <label>
       SPFP Signal (T2 / PD FS)
-      <select id="spfpSignal">
+      <select id="spfpSignalT2">
         <option value=""></option>
         <option value="Normal">Normal</option>
         <option value="Mild">Mild</option>
@@ -309,7 +309,7 @@
 
     <label>
       SPFP Signal (T1)
-      <select id="spfpSignalT">
+      <select id="spfpSignalT1">
         <option value=""></option>
         <option value="Yes">Yes</option>
         <option value="No">No</option>
@@ -506,7 +506,7 @@
     "reviewDate",
     "planeSagittal", "planeAxial", "planeCoronal",
     "seqT1", "seqT2", "seqSTIR", "seqPDFS", "seqOther",
-    "spfpEdema", "spfpAP", "spfpSignal", "spfpSignalT", "spfpMass",
+    "spfpEdema", "spfpAP", "spfpSignalT2", "spfpSignalT1", "spfpMass",
     "spfpImpingementSigns",
     "spfpMassEffect",
     "hoffaEdema", "patellarMaltracking", "jointEffusion",
@@ -679,8 +679,8 @@
     document.getElementById("seqOther").value = r.seqOther || "";
     document.getElementById("spfpEdema").value = r.spfpEdema || "";
     document.getElementById("spfpAP").value = r.spfpAP || "";
-    document.getElementById("spfpSignal").value = r.spfpSignal || "";
-    document.getElementById("spfpSignalT").value = r.spfpSignalT || "";
+    document.getElementById("spfpSignalT2").value = r.spfpSignalT2 || "";
+    document.getElementById("spfpSignalT1").value = r.spfpSignalT1 || "";
     document.getElementById("spfpMass").value = r.spfpMass || "";
     document.getElementById("spfpImpingementSigns").value = r.spfpImpingementSigns || "";
     document.getElementById("spfpMassEffect").value = r.spfpMassEffect || "";
@@ -734,8 +734,8 @@
       seqOther: document.getElementById("seqOther").value.trim(),
       spfpEdema: document.getElementById("spfpEdema").value,
       spfpAP: document.getElementById("spfpAP").value,
-      spfpSignal: document.getElementById("spfpSignal").value,
-      spfpSignalT: document.getElementById("spfpSignalT").value,
+      spfpSignalT2: document.getElementById("spfpSignalT2").value,
+      spfpSignalT1: document.getElementById("spfpSignalT1").value,
       spfpMass: document.getElementById("spfpMass").value,
       spfpImpingementSigns: document.getElementById("spfpImpingementSigns").value,
       spfpMassEffect: document.getElementById("spfpMassEffect").value,
